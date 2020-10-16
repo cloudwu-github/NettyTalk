@@ -1,0 +1,50 @@
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/item_test?characterEncoding=UTF-8&useUnicode=true&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimeZone=GMT
+    username: root
+    password: root
+    druid:
+      async-init: true
+      initial-size: 15
+      max-active: 30
+      min-idle: 10
+      max-wait: 60000
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      validation-query: SELECT 1 FROM DUAL
+      #connection-properties: config.decrypt=true;config.decrypt.key=${spring.datasource.publicKey}
+      filter:
+        config:
+          enabled: true
+  redis:
+    cluster:
+      nodes: 172.16.2.24:7006,172.16.2.24:7001,172.16.2.24:7002,172.16.2.24:7003,172.16.2.24:7004,172.16.2.24:7005
+    timeout: 6000ms
+    lettuce:
+      pool:
+        max-active: 100
+        max-wait: -1ms
+        max-idle: 10
+    database: 0
+
+
+eureka:
+  instance:
+    #设置向注册中心检测心跳发送的间隔时间,证明自己活着(30)
+    lease-renewal-interval-in-seconds: 10
+    #设置超过多长时间没有发送心跳，则证明自己死了，注册中心剔除服务(90)
+    lease-expiration-duration-in-seconds: 20
+    #注册中心，本服务up中的格式
+    hostname: ${spring.cloud.client.ip-address}
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+  client:
+    service-url:
+      #注册中心地址
+      defaultZone: http://root:123456/localhost:8870/eureka/

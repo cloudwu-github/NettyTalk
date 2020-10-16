@@ -1,0 +1,79 @@
+spring:
+  application:
+    name: netty-service
+  profiles:
+    active: local
+  mvc:
+    async:
+      request-timeout: 30000
+server:
+  port: 9010
+
+#mybatis-plus
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/*Mapper.xml
+  typeAliasesPackage: com.sofn.netty.model
+  global-config:
+    id-type: 3
+    field-strategy: 2
+    auto-set-db-type: true
+    db-column-underline: false
+    refresh-mapper: true
+  configuration:
+    #驼峰命名，数据库中非下划线相隔，报错解决，下面设置为false
+    map-underscore-to-camel-case: false
+    cache-enabled: false
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+
+
+logging:
+  config: classpath:logback-spring.xml
+#  level:
+#    com:
+#      sofn:
+#        ribbonfeignhystrix:
+#          thirdApi:
+#            ShardingApi: debug
+
+# swagger配置
+swagger:
+  # 扫描包
+  base-package: com.sofn.netty.controller
+  # 名称
+  name: netty系统
+  # 接口前缀
+  prefix: /netty
+
+#设置eureka的心跳检测，（依赖spring-boot-starter-actuator）这个只能在application.yml文件中才会生效
+eureka:
+  client:
+    healthcheck:
+      enabled: true
+    #注册客户端，允许检测注册中心服务
+    fetch-registry: true
+    #允许注册到注册中心
+    register-with-eureka: true
+    #设置心跳检测服务间隔时间在开发环境配置，生产环境建议不配置，使用默认
+
+
+#开启feign对hystrix的支持
+feign:
+  hystrix:
+    enabled: true
+    httpclient:
+      connection-timeout: 30000
+
+#ribbon的超时时间
+ribbon:
+  ReadTimeout: 6000
+  ConnectTimeout: 6000
+
+# 最大超时会熔断
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 10000
+
